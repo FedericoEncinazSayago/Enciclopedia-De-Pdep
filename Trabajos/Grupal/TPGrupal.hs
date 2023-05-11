@@ -1,78 +1,122 @@
-data Ley = UnaLey {tema :: String, presupuesto :: Int, apoyos :: [String]}
-data Juez = UnJuez {sectorQueApoya :: String, votaA :: Ley -> Bool} 
+data Ley = UnaLey {
+    nombre :: String,
+    tema :: String,
+    presupuesto :: Int,
+    apoyos :: [String]
+}
 
--- Definicion de instancias para Ley:
+instance Show Ley where
+    show :: Ley -> String
+    show = nombre
 instance Eq Ley where
     (==) :: Ley -> Ley -> Bool
-    (==) (UnaLey t1 p1 a1) (UnaLey t2 p2 a2) = t1 == t2 && not (null (interseccion a1 a2))
+    (==) (UnaLey _ t1 _ a1) (UnaLey _ t2 _ a2) = (t1 == t2) && comparadorDeApoyo a1 a2
 
+leyMedicinal, leyEducacionSuperior, leyMesaTenis , leyTenis :: Ley
+leyMedicinal = UnaLey "Ley Medicinal" "medicinal" 10 ["cambio de todos", "sector financiero","sector conservador"]
+leyEducacionSuperior = UnaLey "Ley Educacion Superior" "educacion" 30 ["docentes universitarios", "partido de centro federal"]
+leyMesaTenis = UnaLey  "Ley Mesa de Tenis" "tenis" 20 ["partido de centro federal", "liga de deportistas autonomos", "club paleta veloz"]
+leyTenis = UnaLey "Ley Tenis" "tenis" 20 ["liga de deportistas autonomos","sector financiero"]
 
+-- Falta compatibilidad de temas, un string adentro de otro
+-- "tenis" esta adentro de "cancha de tenis con estacionamiento"
+-- "dora" está adentro de "computadoras para colegios"
+----- > [1,2,3,4,5,7] [3,4,5]
 
--- Definicion de variables:
-ley1 ,ley2, ley3, ley4 , ley5:: Ley
-ley1 = UnaLey "educacion" 100 ["partido socialista", "partido comunista", "partido conservador"]
-ley2 = UnaLey "seguridad" 200 ["partido socialista", "partido comunista"]
-ley3 = UnaLey "economia" 300 ["partido socialista", "partido comunista", "partido conservador"]
-ley4 = UnaLey "medio ambiente" 400 ["partido socialista", "partido comunista", "partido conservador"]
-ley5 = UnaLey "deporte" 10 ["partido socialista", "partido comunista", "partido conservador"]
+-- No usar recursividad para esto (any? ver)
+comparadorDeApoyo :: [String] -> [String] -> Bool
+comparadorDeApoyo [] _ = False
+comparadorDeApoyo (x:xc) apoyo2
+    | x `elem` apoyo2 = True
+    | otherwise = comparadorDeApoyo xc apoyo2
 
-juez1' :: Juez
+-- Constitucionalidad de las leyes parte 1
+temasEnAgenda :: [String]
+temasEnAgenda = ["medicinal", "tenis"]
 
-juez1' = UnJuez "partido socialista" enFavorDelSectorFinanciepp-p
+type Juez = Ley -> Bool
 
-leyes :: [Ley]
-leyes = [ley1, ley2, ley3, ley4]
-
-agendaDeTemas :: [String]
-agendaDeTemas = ["educacion", "seguridad", "economia", "medio ambiente", "deporte"]
-
-juez1, juez2, juez3, juez4, juez5 :: Juez
-juez1 = opinionPublica
-juez2 = enFavorDelSectorFinanciero
-juez3 = enFavorDelPartidoConservador
-juez4 = unPocoTolerante
-juez5 = masTolerante
+-- Repetido entre jueces
+-- juezPreocupadoPorPlata monto = presupuesto ley > monto
+-- juezPreocupado = juezPreocupadoPorPlata 10
+-- juezTolerante = juezPreocupadoPorPlata 20
+-- Lo mismo con los sectores
+juezOpinionPublica, juezFinanciero, juezPreocupado, juezTolerante, juezConservador:: Juez
+juezOpinionPublica ley = tema ley `elem` temasEnAgenda
+juezFinanciero ley = "sector financiero" `elem` apoyos ley
+juezPreocupado ley = presupuesto ley <= 10
+juezTolerante ley = presupuesto ley <= 20
+juezConservador ley = "sector conservador" `elem` apoyos ley
 
 corteSuprema :: [Juez]
-corteSuprema = [juez1, juez2, juez3, juez4, juez5]
+corteSuprema = [juezOpinionPublica, juezFinanciero, juezPreocupado, juezTolerante, juezConservador]
 
--- Definicion de funciones: 
-interseccion :: Eq a => [a] -> [a] -> [a]
-interseccion [] _ = []
-interseccion (x:xs) ys
-    | x `elem` ys = x : interseccion xs ys
-    | otherwise = interseccion xs ys
+corteTernera :: [Juez]
+corteTernera = [juezOpinionPublica, juezFinanciero, juezPreocupado, juezTolerante, juezConservador, juezAfirmativo, juezInventado, juezExquisito]
 
-opinionPublica :: Juez
-opinionPublica leyEvaluada = tema leyEvaluada `elem` agendaDeTemas
+constitucionalidad :: [Juez] -> Ley -> Bool
+constitucionalidad jueces ley = length jueces `div` 2 < contarVerdaderos jueces ley
 
-enFavorDelSectorFinanciero :: Juez -> Ley -> Bool 
-enFavorDelSectorFinanciero juez leyEvaluada = sectorQueApoya juez `elem` apoyos leyEvaluada
+-- Tarea para el hogar: transformar esto en un filter genérico
+-- Tarea para el hogar: transformar esto en un sum genérico que recibe una función
+contarVerdaderos :: [Juez] -> Ley -> Int
+contarVerdaderos [] _ = 0
+contarVerdaderos (x:xs) ley
+    | x ley = 1 + contarVerdaderos xs ley
+    | otherwise = contarVerdaderos xs ley
 
-enFavorDelPartidoConservador :: Juez
-enFavorDelPartidoConservador leyEvaluada = "partido conservador" `elem` apoyos leyEvaluada
+-- Constitucionalidad de las leyes parte 2
+juezAfirmativo, juezInventado, juezExquisito :: Juez
+juezAfirmativo _ = True
+juezInventado ley = length (apoyos ley) >= 2
+juezExquisito ley = presupuesto ley <= 30 -- un tipo no tan preocupado
 
-unPocoTolerante :: Juez
-unPocoTolerante leyEvaluada = presupuesto leyEvaluada <= 10
+-- Constitucionalidad de las leyes parte 2
+listaDeLeyes :: [Ley]
+listaDeLeyes = [leyMedicinal, leyMesaTenis, leyTenis, leyEducacionSuperior]
 
-masTolerante :: Juez
-masTolerante leyEvaluada = presupuesto leyEvaluada <= 20
+queLeyEsInconstitucional :: [Ley] -> [Juez] -> [Ley]
+queLeyEsInconstitucional listaLeyes cortSuprema = filter (not . constitucionalidad cortSuprema) listaLeyes
 
-hayMasVotosPositivos :: [Bool] -> Bool
-hayMasVotosPositivos lista = length (filter not lista) < length lista - length (filter not lista)
+leyesInconstAConst :: [Ley] -> [Juez] -> [Juez] -> [Ley]
+leyesInconstAConst leyes juecesViejos juecesNuevos = filter (constitucionalidad juecesNuevos)  (queLeyEsInconstitucional leyes juecesViejos)
 
-esConstitucional :: Ley -> [Juez] -> Bool
-esConstitucional ley corteSuprema = hayMasVotosPositivos (map (\juez -> juez ley) corteSuprema)
-
-leyesInconstitucionales :: [Ley] -> [Juez] -> [Ley]
-leyesInconstitucionales listaDeLeyes corteSuprema = filter (\ley -> not (esConstitucional ley corteSuprema)) listaDeLeyes
-
-cambiarVoto :: Juez -> Juez
-cambiarVoto juez = not . juez
-
+-- Cuestión de principios 
 borocotizar :: [Juez] -> [Juez]
-borocotizar = map cambiarVoto
+borocotizar = map (not .)
 
-apoyaUnSectorSocial :: Juez -> [Ley] -> Bool
-apoyaUnSectorSocial juez [] = False
-apoyaUnSectorSocial juez listaDeLeyes = length (filter (cambiarVoto juez) listaDeLeyes) < length (filter juez listaDeLeyes)
+-- No usar recursividad
+-- sectorEstaEnTodas sector leyes corte = (estaEnTodas sector) (aprobadasPorLaCorte corte leyes)
+-- estaEnTodas = all (elem ....) (sectores leyes)
+-- Solo el all, no recursividad
+saberSiEseSectorSocialEstaEnTodas :: [String] -> [[String]] -> [String]
+saberSiEseSectorSocialEstaEnTodas [] _ = []
+saberSiEseSectorSocialEstaEnTodas (x:xs) apoyosDeLasOtrasLeyes
+  | all (\sublista -> x `elem` sublista) apoyosDeLasOtrasLeyes = x : saberSiEseSectorSocialEstaEnTodas xs apoyosDeLasOtrasLeyes
+  | otherwise = saberSiEseSectorSocialEstaEnTodas xs apoyosDeLasOtrasLeyes
+
+leyesApoyadasPorEl :: Juez -> [Ley] -> [Ley]
+leyesApoyadasPorEl juez listaDeLeyes = filter (juez) listaDeLeyes
+
+apoyosDeLasLeyes :: [Ley] -> [[String]]
+apoyosDeLasLeyes = map apoyos
+
+tomarUnaListaDeApoyos :: [[String]] -> [String]
+tomarUnaListaDeApoyos listaDeApoyos = head listaDeApoyos
+
+saberSiApoyaUnSectorSocial :: Juez -> [Ley] -> Bool
+saberSiApoyaUnSectorSocial juez listaDeLeyes = length (saberSiEseSectorSocialEstaEnTodas ((tomarUnaListaDeApoyos . apoyosDeLasLeyes . leyesApoyadasPorEl juez) listaDeLeyes) ((apoyosDeLasLeyes . leyesApoyadasPorEl juez) listaDeLeyes)) == 1
+
+{- Para pensar: Si hubiera una ley apoyada por infinitos sectores ¿puede ser declarada constitucional? ¿cuáles jueces podrián votarla y cuáles no? Justificar y ejemplificar -}
+
+{- Respuesta:
+Si la pregunta es moral, si porque todos estan de acuerdo. Si la pregunta es en cuanto a que
+pasaria con el codigo, nunca se llegaria declarar porque la funcion no terminaria de correr al
+trabarse en por ejemplo el juezInventado necesita el lenght de la lista de apoyos y al ser infinita
+nunca lo obtendria. Mismo pasa con el juezFinanciero que busca el sector financiero en la lista
+de apoyos y si el sector financiero es el ultimo en el listado se quedaria sin memoria antes de
+llegar.
+
+Los jueces que no interactuen con la lista de apoyos podrian votar sin problemas, mientras que los
+que si interactuan con la misma tendrian problemas como juezFinanciero y juezConservador o 
+sino un juez como juezInventado nunca podria terminar -}
