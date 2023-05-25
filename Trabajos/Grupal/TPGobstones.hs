@@ -92,7 +92,7 @@ posicionDeLaCeldaEsIgualAlCabezal celda tablero = posicionDeLaCelda celda == cel
 
 sacar :: BolitaDeColor -> Sentencia
 sacar bolitaDeColor tablero
-    | hayUnaBolitaDeEseColor bolitaDeColor (celdaActualDelCabezal tablero) = actualizarTablero sacarUnaBolitaDeEseColor bolitaDeColor tablero
+    | hayUnaBolitaDeEseColor bolitaDeColor tablero = actualizarTablero sacarUnaBolitaDeEseColor bolitaDeColor tablero
     | otherwise = error "No hay bolitas del color para sacar de la celda actual"
 
 sacarUnaBolitaDeEseColor :: BolitaDeColor -> BolitasDeColores -> BolitasDeColores
@@ -103,8 +103,8 @@ sacarUnaBolitaDeEseColor bolitaDeColor (bolitaDeColorPrimera : bolitasDeColores)
 celdaActualDelCabezal :: Tablero -> Celda
 celdaActualDelCabezal tablero = head (filter (\celda -> fst celda == celdaActual (cabezal tablero)) (celdas tablero))
 
-hayUnaBolitaDeEseColor :: BolitaDeColor -> Celda -> Bool
-hayUnaBolitaDeEseColor bolitaDeColor celda = bolitaDeColor `elem` snd celda
+hayUnaBolitaDeEseColor :: BolitaDeColor -> Tablero -> Bool
+hayUnaBolitaDeEseColor bolitaDeColor tablero  = bolitaDeColor `elem` snd (celdaActualDelCabezal tablero)
 
 -- Punto 4: (a, b, c y d)
 
@@ -140,3 +140,10 @@ mientras condicion sentencias tablero
 irAlBorde :: Direccion -> Sentencia
 irAlBorde direccion tablero = mientras (puedeMoverse (calcularNuevaPosicion direccion tablero)) [moverCabezal direccion] tablero
 
+-- Punto 5:
+
+cantidadDeBolitasDeEseColor :: BolitaDeColor -> Tablero -> Int
+cantidadDeBolitasDeEseColor bolitaDeColor tablero = cuantoHayBolitas bolitaDeColor (celdaActualDelCabezal tablero)
+
+cuantoHayBolitas :: BolitaDeColor -> Celda -> Int
+cuantoHayBolitas bolitaDeColor celdaDeCabezal = length (filter (== bolitaDeColor) (snd celdaDeCabezal))
