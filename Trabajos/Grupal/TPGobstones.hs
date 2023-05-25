@@ -1,4 +1,11 @@
 -- Punto 1:
+module Library where
+import PdePreludat
+
+doble :: Number -> Number
+doble numero = numero + numero
+
+-- Punto 1:
 
 type BolitaDeColor = String
 type BolitasDeColores = [BolitaDeColor]
@@ -10,16 +17,8 @@ type Direcciones = [Direccion]
 
 data Tablero = UnTablero {
     celdas :: Celdas,
-    cabezal :: Cabezal
+    posicionActualDelCabezal :: Posicion
 }
-
-data Cabezal = UnCabezal {
-    celdaActual :: Posicion,
-    direccionesQuePuedeMoverse :: Direcciones
-}
-
-coloresPosibles :: Colores
-coloresPosibles = ["Rojo", "Azul", "Verde", "Negro"]
 
 bolitaRojo, bolitaAzul, bolitaVerde, bolitaNegra :: BolitaDeColor
 bolitaRojo = "Rojo"
@@ -42,7 +41,7 @@ direccionesDisponibles = [norte, sur, este, oeste]
 -- Punto 2:
 
 inicializarTablero :: Number -> Number -> Tablero
-inicializarTablero cantFilas cantColumnas = UnTablero (hacerCeldas cantFilas cantColumnas) (UnCabezal (1, 1) direccionesDisponibles)
+inicializarTablero cantFilas cantColumnas = UnTablero (hacerCeldas cantFilas cantColumnas) (1, 1)
 
 hacerCeldas :: Number -> Number -> Celdas
 hacerCeldas cantFilas cantColumnas = [((x, y), []) | x <- [0..(cantFilas - 1)], y <- [0..(cantColumnas - 1)]]
@@ -58,13 +57,13 @@ mover direccionAMover tablero
     | otherwise = error "El cabezal se cayó del tablero"
 
 calcularNuevaPosicion :: Direccion -> Tablero -> Posicion
-calcularNuevaPosicion direccionAMover tablero = direccionAMover (celdaActual (cabezal tablero))
+calcularNuevaPosicion direccionAMover tablero = direccionAMover (posicionActualDelCabezal tablero)
 
 puedeMoverse :: Posicion -> Tablero -> Bool
 puedeMoverse posicionNueva tablero = any (\celda -> fst celda == posicionNueva) (celdas tablero)
 
 actualizarCabezal :: Posicion -> Tablero -> Tablero
-actualizarCabezal posicionNueva tablero = tablero {cabezal = (cabezal tablero) {celdaActual = posicionNueva}}
+actualizarCabezal posicionNueva tablero = tablero {posicionActualDelCabezal = posicionNueva}
 
 poner :: BolitaDeColor -> Sentencia
 poner = actualizarTablero agregarBolita
@@ -87,7 +86,7 @@ posicionDeLaCelda :: Celda -> Posicion
 posicionDeLaCelda = fst
 
 posicionDeLaCeldaEsIgualAlCabezal :: Celda -> Tablero -> Bool
-posicionDeLaCeldaEsIgualAlCabezal celda tablero = posicionDeLaCelda celda == celdaActual (cabezal tablero)
+posicionDeLaCeldaEsIgualAlCabezal celda tablero = posicionDeLaCelda celda == posicionActualDelCabezal tablero
 
 sacar :: BolitaDeColor -> Sentencia
 sacar bolitaDeColor tablero
@@ -100,7 +99,7 @@ sacarUnaBolitaDeEseColor bolitaDeColor (bolitaDeColorPrimera : bolitasDeColores)
     | otherwise = bolitaDeColorPrimera : sacarUnaBolitaDeEseColor bolitaDeColor bolitasDeColores
 
 celdaActualDelCabezal :: Tablero -> Celda
-celdaActualDelCabezal tablero = head (filter (\celda -> fst celda == celdaActual (cabezal tablero)) (celdas tablero))
+celdaActualDelCabezal tablero = head (filter (\celda -> fst celda == posicionActualDelCabezal tablero) (celdas tablero))
 
 hayUnaBolitaDeEseColor :: BolitaDeColor -> Tablero -> Bool
 hayUnaBolitaDeEseColor bolitaDeColor tablero  = bolitaDeColor `elem` snd (celdaActualDelCabezal tablero)
@@ -139,10 +138,10 @@ irAlBorde direccion tablero = mientras (puedeMoverse (calcularNuevaPosicion dire
 -- Punto 5:
 
 cantidadDeBolitasDeEseColor :: BolitaDeColor -> Tablero -> Number
-cantidadDeBolitasDeEseColor bolitaDeColor tablero = cuantoHayBolitasDeEseColorHay bolitaDeColor (celdaActualDelCabezal tablero)
+cantidadDeBolitasDeEseColor bolitaDeColor tablero = cuantoHayBolitas bolitaDeColor (celdaActualDelCabezal tablero)
 
-cuantoHayBolitasDeEseColorHay :: BolitaDeColor -> Celda -> Number
-cuantoHayBolitasDeEseColorHay bolitaDeColor celdaDeCabezal = length (filter (== bolitaDeColor) (snd celdaDeCabezal))
+cuantoHayBolitas :: BolitaDeColor -> Celda -> Number
+cuantoHayBolitas bolitaDeColor celdaDeCabezal = length (filter (== bolitaDeColor) (snd celdaDeCabezal))
 
 -- Punto 6:
 
