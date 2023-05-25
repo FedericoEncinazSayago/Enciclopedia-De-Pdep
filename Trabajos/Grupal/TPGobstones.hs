@@ -1,11 +1,4 @@
 -- Punto 1:
-module Library where
-import PdePreludat
-
-doble :: Number -> Number
-doble numero = numero + numero
-
--- Punto 1:
 
 type BolitaDeColor = String
 type BolitasDeColores = [BolitaDeColor]
