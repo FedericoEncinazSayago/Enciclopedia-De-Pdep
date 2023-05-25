@@ -1,10 +1,10 @@
 -- Punto 1:
 
-type BolitasDeColores = [String]
 type BolitaDeColor = String
+type BolitasDeColores = [BolitaDeColor]
 type Posicion = (Number, Number)
 type Celda = (Posicion, BolitasDeColores)
-type Celdas = [(Posicion, BolitasDeColores)]
+type Celdas = [Celda]
 type Direccion = Posicion -> Posicion
 type Direcciones = [Direccion]
 
