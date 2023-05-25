@@ -1,9 +1,3 @@
-module Library where
-import PdePreludat
-
-doble :: Number -> Number
-doble numero = numero + numero
-
 -- Punto 1:
 
 type BolitasDeColores = [String]
@@ -51,7 +45,7 @@ inicializarTablero :: Number -> Number -> Tablero
 inicializarTablero cantFilas cantColumnas = UnTablero (hacerCeldas cantFilas cantColumnas) (UnCabezal (1, 1) direccionesDisponibles)
 
 hacerCeldas :: Number -> Number -> Celdas
-hacerCeldas cantFilas cantColumnas = [((x, y), []) | x <- [1..cantFilas], y <- [1..cantColumnas]]
+hacerCeldas cantFilas cantColumnas = [((x, y), []) | x <- [0..(cantFilas - 1)], y <- [0..(cantColumnas - 1)]]
 
 -- Punto 3: (a, b y c)
 
@@ -145,10 +139,10 @@ irAlBorde direccion tablero = mientras (puedeMoverse (calcularNuevaPosicion dire
 -- Punto 5:
 
 cantidadDeBolitasDeEseColor :: BolitaDeColor -> Tablero -> Number
-cantidadDeBolitasDeEseColor bolitaDeColor tablero = cuantoHayBolitas bolitaDeColor (celdaActualDelCabezal tablero)
+cantidadDeBolitasDeEseColor bolitaDeColor tablero = cuantoHayBolitasDeEseColorHay bolitaDeColor (celdaActualDelCabezal tablero)
 
-cuantoHayBolitas :: BolitaDeColor -> Celda -> Number
-cuantoHayBolitas bolitaDeColor celdaDeCabezal = length (filter (== bolitaDeColor) (snd celdaDeCabezal))
+cuantoHayBolitasDeEseColorHay :: BolitaDeColor -> Celda -> Number
+cuantoHayBolitasDeEseColorHay bolitaDeColor celdaDeCabezal = length (filter (== bolitaDeColor) (snd celdaDeCabezal))
 
 -- Punto 6:
 
