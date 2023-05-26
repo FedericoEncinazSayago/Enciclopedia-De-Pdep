@@ -1,9 +1,3 @@
-module Library where
-import PdePreludat
-
-doble :: Number -> Number
-doble numero = numero + numero
-
 -- Punto 1:
 
 type Color = String
@@ -48,7 +42,7 @@ inicializarTablero :: Number -> Number -> Tablero
 inicializarTablero cantFilas cantColumnas = UnTablero (hacerCeldas cantFilas cantColumnas) (1, 1)
 
 hacerCeldas :: Number -> Number -> Celdas
-hacerCeldas cantFilas cantColumnas = [((x, y), []) | x <- [0..(cantFilas - 1)], y <- [0..(cantColumnas - 1)]]
+hacerCeldas cantFilas cantColumnas = [((x, y), []) | x <- [1..cantFilas], y <- [1..cantColumnas]]
 
 -- Punto 3: (a, b y c)
 
