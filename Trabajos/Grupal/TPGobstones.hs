@@ -1,5 +1,13 @@
+module Library where
+import PdePreludat
+
+doble :: Number -> Number
+doble numero = numero + numero
+
 -- Punto 1:
 
+type Color = String
+type Colores = [Color]
 type BolitaDeColor = String
 type BolitasDeColores = [BolitaDeColor]
 type Posicion = (Number, Number)
@@ -19,9 +27,12 @@ bolitaAzul = "Azul"
 bolitaVerde = "Verde"
 bolitaNegra = "Negro"
 
+coloresDisponibles :: Colores
+coloresDisponibles = ["Rojo", "Azul", "Verde", "Negro"]
+
 norte, sur, este, oeste :: Direccion
-norte posicionActual = armarTupla posicionActual 1 1
-sur posicionActual = armarTupla posicionActual (-1) (-1)
+norte posicionActual = armarTupla posicionActual 1 0
+sur posicionActual = armarTupla posicionActual (-1) 0
 este posicionActual = armarTupla posicionActual 0 1
 oeste posicionActual = armarTupla posicionActual (-1) 0
 
@@ -59,7 +70,9 @@ actualizarCabezal :: Posicion -> Tablero -> Tablero
 actualizarCabezal posicionNueva tablero = tablero {posicionActualDelCabezal = posicionNueva}
 
 poner :: BolitaDeColor -> Sentencia
-poner = actualizarTablero agregarBolita
+poner bolitaDeColor tablero
+    | bolitaDeColor `elem` coloresDisponibles = actualizarTablero agregarBolita bolitaDeColor tablero
+    | otherwise = error "La bolita de ese color no corresponde a los colores disponible"
 
 agregarBolita :: BolitaDeColor -> BolitasDeColores -> BolitasDeColores
 agregarBolita bolitaDeColor bolitasDeColores = bolitaDeColor : bolitasDeColores
