@@ -34,7 +34,7 @@ norte, sur, este, oeste :: Direccion
 norte posicionActual = armarTupla posicionActual 1 0
 sur posicionActual = armarTupla posicionActual (-1) 0
 este posicionActual = armarTupla posicionActual 0 1
-oeste posicionActual = armarTupla posicionActual (-1) 0
+oeste posicionActual = armarTupla posicionActual 0 (-1)
 
 armarTupla :: Posicion -> Number -> Number -> Posicion
 armarTupla posicionActual primeraCoordenaNueva segundaCoordenaNueva = (fst posicionActual + primeraCoordenaNueva, snd posicionActual + segundaCoordenaNueva)
