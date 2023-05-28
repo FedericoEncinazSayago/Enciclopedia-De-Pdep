@@ -8,6 +8,7 @@ data Ley = UnaLey {
 instance Show Ley where
     show :: Ley -> String
     show = nombre
+
 instance Eq Ley where
     (==) :: Ley -> Ley -> Bool
     (==) (UnaLey _ t1 _ a1) (UnaLey _ t2 _ a2) = (t1 == t2) && comparadorDeApoyo a1 a2
