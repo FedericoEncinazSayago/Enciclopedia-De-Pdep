@@ -36,7 +36,7 @@ cambiarPuntaje :: Int -> Personaje -> Personaje
 cambiarPuntaje nuevoPuntaje personaje = personaje {puntaje = puntaje personaje + nuevoPuntaje}
 
 personajeSinMaterialesPorLaReceta :: Personaje -> Materiales -> Personaje
-personajeSinMaterialesPorLaReceta = foldl vaSacandoElementosRepitidos
+personajeSinMaterialesPorLaReceta = foldl sacarMaterialNecesarioDelInventario
 
 sacarMaterialNecesarioDelInventario :: Personaje -> Material -> Personaje
 sacarMaterialNecesarioDelInventario personaje materialNecesario = personaje {inventario = tomarUnMaterialNecesario materialNecesario (inventario personaje)}
