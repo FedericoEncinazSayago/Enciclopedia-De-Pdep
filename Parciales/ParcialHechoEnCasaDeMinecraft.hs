@@ -38,14 +38,14 @@ cambiarPuntaje nuevoPuntaje personaje = personaje {puntaje = puntaje personaje +
 personajeSinMaterialesPorLaReceta :: Personaje -> Materiales -> Personaje
 personajeSinMaterialesPorLaReceta = foldl vaSacandoElementosRepitidos
 
-vaSacandoElementosRepitidos :: Personaje -> Material -> Personaje
-vaSacandoElementosRepitidos personaje materialNecesario = personaje {inventario = eliminarRepetido materialNecesario (inventario personaje)}
+sacarMaterialNecesarioDelInventario :: Personaje -> Material -> Personaje
+sacarMaterialNecesarioDelInventario personaje materialNecesario = personaje {inventario = tomarUnMaterialNecesario materialNecesario (inventario personaje)}
 
-eliminarRepetido :: Material -> Materiales -> Materiales
-eliminarRepetido _ [] = []
-eliminarRepetido materialNecesario (material:materiales)
+tomarUnMaterialNecesario :: Material -> Materiales -> Materiales
+tomarUnMaterialNecesario _ [] = []
+tomarUnMaterialNecesario materialNecesario (material:materiales)
     | materialNecesario == material = materiales
-    | otherwise = material : eliminarRepetido materialNecesario materiales
+    | otherwise = material : tomarUnMaterialNecesario materialNecesario materiales
 
 agregarCambios :: Personaje -> Receta -> Personaje
 agregarCambios personaje receta = (cambiarPuntaje (10 * segundosEnCraftear receta) . agregarMaterial (nombreDelMaterial receta)) personaje
@@ -54,8 +54,8 @@ agregarCambios personaje receta = (cambiarPuntaje (10 * segundosEnCraftear recet
 
 type Recetas = [Receta]
 
-duplicanPuntaje :: Recetas -> Personaje -> Recetas
-duplicanPuntaje recetas jugador = filter (siDuplicaPuntaje jugador) recetas
+recetasQueDuplicanPuntaje :: Recetas -> Personaje -> Recetas
+recetasQueDuplicanPuntaje recetas jugador = filter (siDuplicaPuntaje jugador) recetas
 
 siDuplicaPuntaje :: Personaje -> Receta -> Bool
 siDuplicaPuntaje jugador receta  = puntaje (craftearObjeto receta jugador) >= 2 * puntaje jugador
@@ -115,5 +115,3 @@ azada materialBuscado bioma = head (filter (\materialDelBioma -> materialBuscado
 
 azada' :: String -> Herramienta
 azada' materialBuscado bioma = head (filter (==materialBuscado) (materialesDelBioma bioma)) -- Se puede hacer mejor de esta forma 
-
-
