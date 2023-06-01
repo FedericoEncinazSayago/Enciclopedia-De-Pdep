@@ -60,8 +60,8 @@ durabilidadDeUnaFlota = sum . map durabilidad
 comoQuedoUnaNaveDespuesDeSerAtacada :: Nave -> Nave -> Nave
 comoQuedoUnaNaveDespuesDeSerAtacada naveAtacante naveAtacada = actulizarNaveAtacada (activarPoderDeLaNave naveAtacada) (activarPoderDeLaNave naveAtacante)
 
-actulizarNaveAtacada :: Nave -> Nave -> Nave
-actulizarNaveAtacada naveAtacada naveAtacante
+actualizarNaveAtacada :: Nave -> Nave -> Nave
+actualizarNaveAtacada naveAtacada naveAtacante
     | ataque naveAtacante > escudo naveAtacada = actualizarDurabilidad (-(calcularNivelDeDano naveAtacante naveAtacada)) naveAtacada
     | otherwise = naveAtacada
 
