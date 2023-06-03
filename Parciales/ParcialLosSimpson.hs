@@ -46,7 +46,7 @@ cuantoGano :: String -> Int
 cuantoGano = length
 
 serDirector :: Actividad
-serDirector = actualizarFelicidad (-20) . irAlTrabajo "Escuela elemental"
+serDirector = irEscuelaElemental . irAlTrabajo "Escuela elemental"
 
 -- Definimos personajes:
 
