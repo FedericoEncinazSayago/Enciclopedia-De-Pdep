@@ -26,7 +26,7 @@ serGrosoEnNeedForSpeed :: Deseo
 serGrosoEnNeedForSpeed chico = chico {habilidades = habilidades chico ++ versionesDeNeedForSpeeed}
 
 serMayor :: Deseo
-serMayor = cambiarEdad (+18)
+serMayor = chico {edad = 18}
 
 cambiarEdad :: (Int -> Int) -> Chico -> Chico
 cambiarEdad nuevaEdad chico = chico {edad = nuevaEdad (edad chico)}
