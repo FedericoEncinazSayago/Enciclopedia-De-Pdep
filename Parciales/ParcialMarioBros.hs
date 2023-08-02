@@ -159,7 +159,7 @@ agregarReparacion :: Reparacion -> Plomero -> Plomero
 agregarReparacion reparacion plomero = plomero {reparacionesHechas = reparacion : reparacionesHechas plomero}
 
 hacerReparacion :: Reparacion -> Plomero -> Plomero
-hacerReparacion reparacion = actualizarDinero 100 . agregarReparacion reparacion
+hacerReparacion reparacion = actualizarDinero 100 . agregarReparacion reparacion . efectosColateralesDeLaReparacion reparacion
 
 sacarBuenas :: Herramientas -> Herramientas
 sacarBuenas = filter (not . esBuena)
