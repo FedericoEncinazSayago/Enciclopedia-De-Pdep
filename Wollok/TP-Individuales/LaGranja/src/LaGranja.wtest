@@ -1,0 +1,27 @@
+import LaGranja.*
+
+test "Don Ponciano fumiga su campo" {
+	donPonciano.fugimarCampo()
+	assert.equals(4850, donPonciano.dineroActual())
+}
+
+test "Don Ponciano fertilizar su campo" {
+	donPonciano.fertilizarCampo()
+	assert.equals(4900, donPonciano.dineroActual())
+}
+
+test "Debido una gran sequia, Don Ponciano resiembra su campo con un nuevo cultivo" {
+	donPonciano.sembrarHectarea()
+	donPonciano.sembrarHectarea()
+	donPonciano.resembrarCampo(maiz)
+	assert.equals(-11500, donPonciano.dineroActual())
+}
+
+test "Llevar al maximo al campo" {
+	donPonciano.llevarAlMaximo()
+	assert.equals(2500, donPonciano.dineroActual())
+}
+
+test "Pasar de temporada" {
+	donPonciano.pasarNuevaTemporadaAlCampo(12, maiz)
+}
