@@ -15,10 +15,3 @@ aprobo nota = nota >= 4
 max :: Int -> Int -> Int
 max x y | x >= y = x 
         | otherwise = y
-
-for(int i = 0; i < 10; i++)
-{
-        cout << ingresar valor << endl;
-        cin >> valor;
-        sumar += valor;
-}
