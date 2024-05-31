@@ -66,16 +66,14 @@ esNombreBuscado nombreBuscado herramienta = ((== nombreBuscado). tomarNCantidadD
 
 type Requisito = Herramienta -> Bool
 
-tieneEsteMango :: Mango -> Herramienta -> Bool
-tieneEsteMango mangoBuscado herramienta = mango herramienta == mangoBuscado
-
 esUnMartilloConGomaOMadera :: Requisito
-esUnMartilloConGomaOMadera herramienta
-    | esNombreBuscado "Martillo" herramienta = tieneEsteMango Goma herramienta || tieneEsteMango Madera herramienta
-    | otherwise = False
+esUnMartilloConGomaOMadera (UnHerramienta "Martillo" _ Goma) = True
+esUnMartilloConGomaOMadera (UnHerramienta "Martillo" _ Madera) = True
+esUnMartilloConGomaOMadera (UnHerramienta _ _ _) = False
 
 tieneUnMangoQueSaleTanto :: Requisito
-tieneUnMangoQueSaleTanto herramienta = tieneEsteMango Hierro herramienta && (precio herramienta >= 10000)
+tieneUnMangoQueSaleTanto (UnHerramienta _ precio Hierro) = precio >= 10000
+tieneUnMangoQueSaleTanto _ = False
 
 -- Realizamos la funcion para saber si una herramienta es buena:
 
