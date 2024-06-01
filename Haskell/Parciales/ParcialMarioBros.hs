@@ -149,9 +149,7 @@ cumpleLaCondicionOEsUnMalvadoConMartillo :: Reparacion -> Plomero -> Bool
 cumpleLaCondicionOEsUnMalvadoConMartillo reparacion plomero = condicion reparacion plomero || esMalvadoConMartillo plomero
 
 esMalvadoConMartillo :: Plomero -> Bool
-esMalvadoConMartillo plomero
-    | esMalvado plomero = tieneUnaHerramientaConTalNombre "Martillo" plomero
-    | otherwise = False
+esMalvadoConMartillo plomero = esMalvado plomero && tieneUnaHerramientaConTalNombre "Martillo" plomero
 
 agregarReparacion :: Reparacion -> Plomero -> Plomero
 agregarReparacion reparacion plomero = plomero {reparacionesHechas = reparacion : reparacionesHechas plomero}
@@ -180,7 +178,7 @@ hacerUnaJornadaLaboral reparaciones plomero = foldl intentarHacerReparacion plom
 
 -- Punto 8: 
 
-type CriterioParaPlomero = (Plomero -> Float)
+type CriterioParaPlomero = Plomero -> Float
 
 type Plomeros = [Plomero]
 
@@ -190,10 +188,13 @@ empleadosDespuesDeUnaJornadaLaboral plomeros reparaciones = map (hacerUnaJornada
 -- Definir los funciones para axuliares para los empleados:
 
 elmasRepador :: CriterioParaPlomero
-elmasRepador plomero = genericLength (reparacionesHechas plomero)
+elmasRepador plomero = (cuantoTiene . reparacionesHechas) plomero
 
 elQueMasInvertio :: CriterioParaPlomero
-elQueMasInvertio plomero = genericLength (cajaDeHerramienta plomero)
+elQueMasInvertio plomero = (cuantoTiene . cajaDeHerramienta) plomero
+
+cuantoTiene :: [a] -> Float
+cuantoTiene lista = genericLength lista 
 
 sacarEmpleadoSegun :: CriterioParaPlomero -> Plomeros -> Plomero
 sacarEmpleadoSegun _ [plomero] = plomero
