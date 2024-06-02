@@ -11,12 +11,7 @@ data Personaje = UnPersonaje {
 -- Definimos funciones auxiliares para los personajes:
 
 actualizarFelicidad :: Int -> Personaje -> Personaje
-actualizarFelicidad nuevoNivel personaje = personaje {felicidad = comoQuedaElNivel (felicidad personaje) nuevoNivel}
-
-comoQuedaElNivel :: Int -> Int -> Int
-comoQuedaElNivel actualNivel variacion
-    | actualNivel + variacion > 0 = actualNivel + variacion
-    | otherwise = 0
+actualizarFelicidad nuevoNivel personaje = personaje {felicidad = max (0) (felicidad personaje + nuevoNivel)}
 
 actualizarDineroDisponible :: Int -> Personaje -> Personaje
 actualizarDineroDisponible nuevoNivel personaje = personaje {dinero = dinero personaje + nuevoNivel}
@@ -81,21 +76,22 @@ srBurns = UnPersonaje "Sr.Burns" 0 1000000000
 
 -- Definimos los logros:
 
+cumpleCondicion :: (Personaje -> Int) -> Int -> Personaje -> Bool
+cumpleCondicion atributo valorReferencia personaje = atributo personaje >= valorReferencia
+
 serMillonario :: Logro
-serMillonario personaje = dinero personaje > dinero srBurns
+serMillonario = cumpleCondicion dinero (dinero srBurns)
 
 alegrarse :: Int -> Logro
-alegrarse nivelFelicidadDeseado personaje = felicidad personaje > nivelFelicidadDeseado
+alegrarse nivelFelicidadDeseado = cumpleCondicion felicidad nivelFelicidadDeseado
 
 irAlProgramaDeKrosti :: Logro
-irAlProgramaDeKrosti personaje = dinero personaje >= 10
+irAlProgramaDeKrosti = cumpleCondicion dinero 10
 
 -- Funciones auxiliares para los logros:
 
 unaActividadResultaDecisivaParaLograrUnLogro :: Actividad -> Logro -> Personaje -> Bool
-unaActividadResultaDecisivaParaLograrUnLogro actividad logro personaje
-    | logro personaje = False
-    | otherwise = (logro . actividad) personaje
+unaActividadResultaDecisivaParaLograrUnLogro actividad logro personaje = (not . logro) personaje || (logro . actividad) personaje
 
 type Actividades = [Actividad]
 
